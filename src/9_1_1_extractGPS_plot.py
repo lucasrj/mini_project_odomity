@@ -4,7 +4,7 @@ import numpy as np
 from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
 
-data = pd.read_csv('DJIFlightRecord.csv', encoding='windows-1252')
+data = pd.read_csv('DJIFlightRecord.csv', encoding='iso-8859-1')
 
 coords_data = data.iloc[:, [12, 13, 15]].copy()
 coords_data.columns = ['OSD.latitude', 'OSD.longitude', 'OSD.altitude']
