@@ -162,5 +162,5 @@ cython_debug/
 
 
 .vscode/
-.jpg
-.png
+*.jpg
+*.png
