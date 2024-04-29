@@ -1,9 +1,11 @@
 import numpy as np
 import cv2
+import sys
 
 class FrameIterator():
-    def __init__(self, filename):
+    def __init__(self, filename,output_dir):
         self.cap = cv2.VideoCapture(filename)
+        self.output_dir = output_dir
 
     def frame_generator(self):
         # Skip the first 1200 frames
@@ -24,8 +26,13 @@ class FrameIterator():
     def main(self):
         i = 0
         for frame in self.frame_generator():
-            cv2.imwrite('/home/u000000/Desktop/github_2_Semester/mini_project_odomity/src/output/frame_' + str(i) + '.png', frame)
+            cv2.imwrite(self.output_dir + str(i) + '.png', frame)
             i+=1
 
-fi = FrameIterator('/home/u000000/Desktop/Large-scaleDronePerception/11_Visual_Odometry_miniproject/DJI_0199.MOV')
+if len(sys.argv) < 3 :
+    print("Usage: command [imput file] [output dir] ")
+    sys.exit(1)
+
+
+fi = FrameIterator(sys.argv[1],sys.argv[2])
 fi.main()
