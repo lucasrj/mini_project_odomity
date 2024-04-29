@@ -29,8 +29,8 @@ class VisualSlam:
         self.input_directory = inputdirectory
 
         # Use ORB features
-        #self.detector = cv2.ORB_create()
-        self.detector = cv2.SIFT_create()
+        self.detector = cv2.ORB_create()
+        #self.detector = cv2.SIFT_create()
         #self.bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
         self.bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
         
