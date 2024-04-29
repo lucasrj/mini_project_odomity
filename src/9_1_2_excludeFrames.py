@@ -26,7 +26,7 @@ class FrameIterator():
     def main(self):
         i = 0
         for frame in self.frame_generator():
-            cv2.imwrite(self.output_dir + str(i) + '.jpg', frame)
+            cv2.imwrite(self.output_dir + "%02d" % i+ '.jpg', frame)
             i+=1
 
 if len(sys.argv) < 3 :
