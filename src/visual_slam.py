@@ -482,8 +482,11 @@ class VisualSlam:
         list_of_files = glob.glob("%s/*.jpg" % self.input_directory)
         list_of_files.sort()
         if len(list_of_files) == 0:
-            print("No images found in the specified directory")
-            return
+            list_of_files = glob.glob("%s/*.png" % self.input_directory)
+            list_of_files.sort()
+            if len(list_of_files) == 0:
+                print("No images found in the specified directory")
+                return
         for idx, filename in enumerate(list_of_files):
             print(filename)
             img = cv2.imread(filename)
