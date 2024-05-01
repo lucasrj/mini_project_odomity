@@ -118,6 +118,7 @@ class Map():
 
 
     def optimize_map(self, postfix = ""):
+        print("optimizing map")
         optimizer = g2o.SparseOptimizer()
         solver = g2o.BlockSolverSE3(g2o.LinearSolverEigenSE3())
         solver = g2o.OptimizationAlgorithmLevenberg(solver)
