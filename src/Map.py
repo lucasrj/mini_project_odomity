@@ -3,11 +3,13 @@ from Datatypes import *
 from TrackedCamera import TrackedCamera
 from TrackedPoint import TrackedPoint
 import numpy as np
+import pandas as pd
 import g2o # type: ignore
 from icecream import ic
 
 
 class Map():
+    camera_dp: pd.DataFrame = pd.DataFrame({"x": [-10],"y": [-10],"z": [-10],"id":[-10]})
     def __init__(self):
         self.clean()
 
@@ -26,7 +28,14 @@ class Map():
     def add_camera(self, camera: TrackedCamera) -> TrackedCamera:
         camera.camera_id = self.increment_id()
         self.cameras.append(camera)
+        ser = self.TrackedCamera_to_pandas(camera)
+        self.camera_dp = pd.concat([self.camera_dp,ser])
+        self.camera_dp.to_csv("camera_dp.csv")
         return camera
+    
+    def TrackedCamera_to_pandas(self, camera: TrackedCamera) -> pd.DataFrame:
+        ser = pd.DataFrame({"x":camera.t[0],"y":camera.t[1],"z":camera.t[2],"id":[camera.camera_id]})
+        return ser
 
     def add_point(self, point: TrackedPoint) -> TrackedPoint:
         point.point_id = self.increment_id()

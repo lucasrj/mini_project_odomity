@@ -247,6 +247,10 @@ class VisualSlam:
         try: 
             retval, rvec, tvec = self.estimate_camera_position_in_map()
 
+            print(f"retval: {retval}")
+            print(f"rvec: {cv2.Rodrigues(rvec)[0]}")
+            print(f"tvec: {tvec}")
+
             if retval:
                 self.reset_mappoint_dict()
                 self.add_new_camera_to_map(current_frame, rvec, tvec)
@@ -400,6 +404,7 @@ class VisualSlam:
             self.initialize_map(self.current_image_pair)
 
         image_to_show = self.current_image_pair.visualize_matches(essential_matches)
+        print(f"essential matrix \n {self.current_image_pair.essential_matrix}")
         cv2.imshow("matches", image_to_show)
 
         self.estimate_current_camera_position(frame2)
@@ -407,7 +412,7 @@ class VisualSlam:
         self.freeze_nonlast_cameras()
         #self.print_camera_details()
 
-        self.map.limit_number_of_camera_in_map(18)
+        self.map.limit_number_of_camera_in_map(200)
         cv2.waitKey(100)
 
 
@@ -480,12 +485,12 @@ class VisualSlam:
             if k == ord('q'):
                 break
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Visual Slam.')
+    parser.add_argument('directory', type=str, 
+                        help='directory with frames')
+    args = parser.parse_args()
 
-parser = argparse.ArgumentParser(description='Visual Slam.')
-parser.add_argument('directory', type=str, 
-                    help='directory with frames')
-args = parser.parse_args()
-
-vs = VisualSlam(args.directory)
-vs.set_camera_matrix()
-vs.run()
+    vs = VisualSlam(args.directory)
+    vs.set_camera_matrix()
+    vs.run()
