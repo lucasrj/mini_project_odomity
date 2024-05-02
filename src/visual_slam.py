@@ -5,6 +5,7 @@ import OpenGL.GL as gl # type: ignore
 import collections
 import argparse
 import ThreeDimViewer
+import matplotlib.pyplot as plt
 from icecream import ic
 
 from Datatypes import *
@@ -443,6 +444,44 @@ class VisualSlam:
         self.show_3d_visualization()
         return frame
 
+    def calc_dist(self,KeyPs,epipolLines):
+        dist = []
+        for pt, line in zip(KeyPs, epipolLines):
+            x = pt[0]; y = pt[1]
+            a = line[0]; b = line[1]; c = line[2]
+            
+            dst = (a*x + b*y + c) / np.sqrt(a**2 + b**2)
+            dist.append(dst)
+
+        return dist
+
+    def calc_epi_dist(self,essentialMatrix,feature1,feature2):
+        
+        epiLine1 = cv2.computeCorrespondEpilines(feature1.reshape(-1, 1, 2), 2, essentialMatrix)
+        epiLine1 = epiLine1.reshape(-1,3)
+        epiLine2 = cv2.computeCorrespondEpilines(feature2.reshape(-1, 1, 2), 2, essentialMatrix)
+        epiLine2 = epiLine2.reshape(-1,3)
+
+        dist1 = self.calc_dist(feature1,epiLine1)
+        dist2 = self.calc_dist(feature2,epiLine2)
+
+        print('mean dist 1: ', np.mean(dist1))
+        print('std deviation dist 1: ', np.std(dist1))
+
+        print('mean dist 2: ', np.mean(dist2))
+        print('std deviation dist 2: ', np.std(dist2))
+
+        print('mean: ', np.mean(dist1))
+        print('std deviation: ', np.std(dist1))
+        plt.hist(dist1, bins=200)
+        plt.show()
+
+        print('mean: ', np.mean(dist2))
+        print('std deviation: ', np.std(dist2))
+        plt.hist(dist2, bins=200)
+        plt.show()
+
+        
 
     def run(self):
         list_of_files = glob.glob("%s/*.jpg" % self.input_directory)
@@ -457,6 +496,7 @@ class VisualSlam:
             print(filename)
             img = cv2.imread(filename)
 
+            #essentialM, f1, f2 = something i dont know 
             scale_percent = 30 # percent of original size
             width = int(img.shape[1] * scale_percent / 100)
             height = int(img.shape[0] * scale_percent / 100)
@@ -464,7 +504,11 @@ class VisualSlam:
 
             img = cv2.resize(img, dim)
             frame = self.process_frame(img)
+            
+            #self.calc_epi_dist()
             self.map.show_map_statistics()
+
+
 
             #cv2.imshow("test", frame);
             k = cv2.waitKey(400000)
@@ -475,10 +519,11 @@ class VisualSlam:
             if k == ord('b'):
                 # Perform bundle adjusment
                 self.unfreeze_cameras(5)
-                #self.print_camera_details()
+                self.print_camera_details()
                 self.map.optimize_map()
                 self.freeze_nonlast_cameras()
-                #self.print_camera_details()
+                print("camera details")
+                self.print_camera_details()
 
         while True:
             k = cv2.waitKey(100)
